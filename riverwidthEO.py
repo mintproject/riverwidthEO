@@ -84,9 +84,9 @@ def rois2polygon(rois,roi_file,job_type='POINT',buf_size=0.007):
         for i in range(N):
             lon_min,lat_min,lon_max,lat_max = rois[i,:]
             if i==0:
-                pf = geopandas.read_file('http://umnlcc.cs.umn.edu/tmp/global_river_points.zip',bbox=tuple([lon_min,lat_min,lon_max,lat_max]))
+                pf = geopandas.read_file('https://data.mint.isi.edu/files/remote-sensing/global_river_points.zip',bbox=tuple([lon_min,lat_min,lon_max,lat_max]))
             else:
-                cf = geopandas.read_file('http://umnlcc.cs.umn.edu/tmp/global_river_points.zip',bbox=tuple([lon_min,lat_min,lon_max,lat_max]))
+                cf = geopandas.read_file('https://data.mint.isi.edu/files/remote-sensing/global_river_points.zip',bbox=tuple([lon_min,lat_min,lon_max,lat_max]))
                 pf = pandas.concat([pf,cf])
         # print(pf.shape)
         pf['geometry'] = pf.geometry.buffer(buf_size)
@@ -102,7 +102,7 @@ def rois2polygon(rois,roi_file,job_type='POINT',buf_size=0.007):
         N = len(rois)
         for i in range(N):
             print('extracing pre-defined cells for: ' + rois[i])
-            cf = geopandas.read_file('http://umnlcc.cs.umn.edu/tmp/countries.zip')
+            cf = geopandas.read_file('https://data.mint.isi.edu/files/remote-sensing/countries.zip')
             cf = cf[cf['NAME_0']==rois[i]]
             bounds = cf.bounds
             # print(bounds)
@@ -110,7 +110,7 @@ def rois2polygon(rois,roi_file,job_type='POINT',buf_size=0.007):
             lat_min = bounds.iloc[0]['miny']
             lon_max = bounds.iloc[0]['maxx']
             lat_max = bounds.iloc[0]['maxy']
-            tf = geopandas.read_file('http://umnlcc.cs.umn.edu/tmp/global_river_points.zip',bbox=tuple([lon_min,lat_min,lon_max,lat_max]))
+            tf = geopandas.read_file('https://data.mint.isi.edu/files/remote-sensing/global_river_points.zip',bbox=tuple([lon_min,lat_min,lon_max,lat_max]))
 
             if i==0:
                 pf = geopandas.tools.sjoin(tf,cf,op='intersects',how='left')
@@ -160,7 +160,7 @@ def get_cells(rois,job_type,job_name,job_loc,buf_size):
         sys.exit()
     roi_file = job_dir + 'rois.shp'
     rois2polygon(rois,roi_file,job_type=job_type,buf_size=buf_size)
-    os.system('wget --quiet http://umnlcc.cs.umn.edu/tmp/rwmbase.zip -O ' + job_dir + 'rwmbase.zip')
+    os.system('wget --quiet https://data.mint.isi.edu/files/remote-sensing/rwmbase.zip -O ' + job_dir + 'rwmbase.zip')
     os.system('unzip -jq ' + job_dir + 'rwmbase.zip -d ' + job_dir)
     # os.system('gsutil -q cp ' + 'gs://river-box-data/CountryDatasets/ETH/init/' + '*clipped_i4* ' + job_dir)
     # os.system('gsutil -q cp ' + 'gs://river-box-data/CountryDatasets/ETH/init/' + '*min_max_i4* ' + job_dir)

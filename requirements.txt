@@ -1,0 +1,10 @@
+rtree
+tensorflow
+keras
+shapely
+fiona
+pyproj
+geopandas
+s2cloudless
+descarteslabs
+progressbar

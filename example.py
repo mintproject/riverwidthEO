@@ -1,4 +1,4 @@
-import dlab as rwm
+import riverwidthEO as rwm
 import numpy as np
 import os
 import time
