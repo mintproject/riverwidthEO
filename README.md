@@ -7,3 +7,29 @@ In many earth science applications, calibration of physical models is a key chal
 Our approach is to provide this much needed calibration data using novel machine learning techniques and multi-temporal satellite imagery that is available freely from Earth Observing satellite based sensors such as Sentinel and Landsat. The latest version (version 1.0) of the packages uses descarteslabs API to download Sentinel-2 imagery of any given river segment. The multi-spectral imagery is then converted into land/water maps using CNN based deep learning techniques. The area variations thus obtained can be used to constraint hydrological models. Click on the video below to see surface area variations of a river segment in Ethiopia.
 
 [![](http://umnlcc.cs.umn.edu/tmp/method_example.png)](http://umnlcc.cs.umn.edu/tmp/data-1050883510-7366.mp4)
+
+
+
+### Installation
+
+##### Docker
+Use the Dockerfile to setup the docker image.
+
+docker build -f Dockerfile -t <put_image_tag_here> .
+
+##### Anaconda
+curl -O https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh
+
+sha256sum Anaconda3-5.0.1-Linux-x86_64.sh
+
+bash Anaconda3-5.0.1-Linux-x86_64.sh
+
+source /home/khand035/.bashrc
+
+conda create --yes -n rweo numpy pandas tensorflow keras gdal shapely scikit-image fiona geopandas
+
+pip install s2cloudless
+
+pip install progressbar
+
+pip install descarteslabs
