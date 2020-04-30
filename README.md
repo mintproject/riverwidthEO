@@ -18,6 +18,12 @@ Use the following command to use the docker to run the script -
 ```
 sudo docker run -v <path_of_local_directory>:<docker_mount_path> -it <image_tag>
 ```
+Set the descarteslabs API client and secret when you are in the docker image -
+```
+export DESCARTESLABS_CLIENT_ID=...
+DESCARTESLABS_CLIENT_SECRET=...
+```
+
 ##### Anaconda
 Install anaconda if it is currently not installed -
 ```
@@ -36,7 +42,7 @@ pip install descarteslabs
 ```
 
 ##### Descarteslabs API
-setup the client id and secret - 
+setup the client id and secret -
 
 ```
 export DESCARTESLABS_CLIENT_ID=...
