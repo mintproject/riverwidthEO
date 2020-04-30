@@ -10,19 +10,23 @@ Our approach is to provide this much needed calibration data using novel machine
 ### Installation
 
 ##### Docker
-Use the Dockerfile to setup the docker image.
+Use the Dockerfile to setup the docker image -
 ```
-docker build -f Dockerfile -t <put_image_tag_here> .
+docker build -f Dockerfile -t <image_tag> .
+```
+Use the following command to use the docker to run the script -
+```
+sudo docker run -v <path_of_local_directory>:<docker_mount_path> -it <image_tag>
 ```
 ##### Anaconda
-Install anaconda if it is currently not installed.
+Install anaconda if it is currently not installed -
 ```
 curl -O https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh
 sha256sum Anaconda3-5.0.1-Linux-x86_64.sh
 bash Anaconda3-5.0.1-Linux-x86_64.sh
 source /home/khand035/.bashrc
 ```
-set up the conda environment
+set up the conda environment -
 ```
 conda create --yes -n rweo numpy pandas tensorflow keras gdal shapely scikit-image fiona geopandas
 source activate rweo
@@ -32,7 +36,7 @@ pip install descarteslabs
 ```
 
 ##### Descarteslabs API
-setup the client id and secret
+setup the client id and secret - 
 
 ```
 export DESCARTESLABS_CLIENT_ID=...
