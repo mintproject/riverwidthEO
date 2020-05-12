@@ -13,7 +13,7 @@ import time
 import progressbar
 import matplotlib.pyplot as plt
 from keras.models import load_model
-
+import pandas as pd
 def extract_epsg(tile_name):
     '''
     calculates the EPSG number of the sentinel2 tile.
@@ -115,13 +115,12 @@ def rois2polygon(rois,roi_file,job_type='POINT',buf_size=0.007):
             if i==0:
                 pf = geopandas.tools.sjoin(tf,cf,op='intersects',how='left')
                 pf = pf[np.isnan(pf['index_right'].values)==0]
-
-            sf = geopandas.tools.sjoin(tf,cf,op='intersects',how='left')
-            sf = sf[np.isnan(sf['index_right'].values)==0]
-            pf = pandas.concat([pf,sf])
+            else:
+                sf = geopandas.tools.sjoin(tf,cf,op='intersects',how='left')
+                sf = sf[np.isnan(sf['index_right'].values)==0]
+                pf = pandas.concat([pf,sf])
 
             # print(pf.shape)
-        # TODO: make the buffer size a parameter
         pf['geometry'] = pf.geometry.buffer(buf_size)
         pf = pf.drop_duplicates()
         print('Total number of pre-defined cells: ' + str(pf.shape[0]))
@@ -730,6 +729,36 @@ def label_correction(lpath):
 
     return info_arr.astype(int),nlist,flist
 
+def remove_duplicate_dates(csvfile):
+    '''
+    removes duplicate dates by average the area for dates with multiple
+    images due to Sentinel2 tile overlap.
+    '''
+
+    info = pd.read_csv(csvfile)
+    fid = open(csvfile,'w')
+    fid.write('date,area\n')
+    area = info['area'].values
+    dates = np.zeros((info.shape[0],))
+    for j in range(info.shape[0]):
+        cdate = info.iloc[j]['date'][0:10]
+        dates[j] = int(cdate.replace('-',''))
+    # getting unique dates
+    udates = np.unique(dates)
+    for j in range(udates.shape[0]):
+        cdate = udates[j]
+        sdate = str(cdate)
+        sdate = sdate[0:4] + '-' + sdate[4:6] + '-' + sdate[6:8] + 'T00:00:00'
+        temp = area[dates==cdate]
+        # checking if the date has a valid area value
+        if np.sum(temp>-1)==0:
+            continue
+        temp[temp==-1] = np.nan
+        # taking the average of the area values
+        temp = np.round(np.nanmean(temp),4)
+        fid.write(sdate + ',' + str(temp) + '\n')
+    fid.close()
+    return
 def prepare_cell_timeseries(job_name,job_loc,cell_id):
 
     '''
@@ -779,6 +808,10 @@ def prepare_cell_timeseries(job_name,job_loc,cell_id):
             carea = np.round(carea*0.0001,4)
         fid.write(cdate + ',' + str(carea) + '\n')
     fid.close()
+    remove_duplicate_dates(out_dir + 'data-' + cell_id + '.csv')
+    return
+
+
 
 def classify_cell(job_name,job_loc,cell_id,start_date,end_date):
 
