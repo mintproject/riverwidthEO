@@ -3,6 +3,9 @@ A python package that processes river segments using satellite imagery and machi
 
 The package enables the user to process any set of user-defined points on rivers or process any of the pre-defined 3,576,396 points on rivers across the globe. Please see the [example](https://github.com/mintproject/riverwidthEO/blob/master/example.py) script for information on how to use the package.
 
+### Dataset
+River Segment Surface Area Dataset provides pre-computed surface area variations for 8,710 river segments in Ethiopia using Sentinel2 imagery from 2015 till 2010. This dataset is availabe through the MINT DataCatalog, and can be downloaded using the jupyter [notebook](https://github.com/mintproject/riverwidthEO/blob/master/MINT_DataCatalog_riverwidthEO.ipynb) (available with the package) as well.
+
 ### Background
 In many earth science applications, calibration of physical models is a key challenge because ground observations are very scarce or completely absent in most regions. For example, hydrological models simulate the flow of water in a basin using physical principles, but necessarily contain numerous parameters (e.g., soil conductivity at different grid points) whose values need to be calibrated for each study region with the help of observations. The most commonly used observation is discharge (volume per second) estimates that are available through ground stations. These stations are costly to install and maintain, and thus are limited in number.  This paucity (or complete absence) of observation data often leads to poorly calibrated models that provide incorrect predictions or have high uncertainty in practice.
 
@@ -52,5 +55,3 @@ setup the client id and secret -
 export DESCARTESLABS_CLIENT_ID=...
 export DESCARTESLABS_CLIENT_SECRET=...
 ```
-
-### Notes
