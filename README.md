@@ -55,3 +55,12 @@ setup the client id and secret -
 export DESCARTESLABS_CLIENT_ID=...
 export DESCARTESLABS_CLIENT_SECRET=...
 ```
+
+### Methodology
+The package uses semantic segmentation based deep neural network architecture to convert a satellite image into a land/water mask. First, a CNN based auto-encoder network was pre-trained using 11,000 unlabeled images taken from rivers around the globe. The pre-trained network weights were then used to fine-tune a semantic segmentation network using 2,900 labeled images. To make the algorithms more robust to atmospheric disturbances, land/water masks were updated using physical principles. Specifically, pixels of a river segment do not change independently but are related to each other through hydraulic and bathymetric constraints. These constraints can be used to identify and correct physical inconsistencies in land/water labels obtained from machine learning algorithms. 
+
+##### Limitations
+The current version of the algorithm has three limitations that we intend to address in the next version:
+1. In certain cases clouds filter has omission errors which leads to underestimation of surface area by the algorithm.
+2. Similarly, in certain cases cloud shadows get incorrectly classified as water which leads to overestimation of surface area by the algorithm.
+3. The current version does not mask out water bodies adjacent to the river segment in the area calculation which could lead to overestimation of surface area for river segments.
