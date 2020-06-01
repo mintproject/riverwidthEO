@@ -1,4 +1,4 @@
-# riverwidthEO
+# riverwidthEO version 1.1 (updated May 31st)
 A python package that processes river segments using satellite imagery and machine learning to create surface area estimates (delivered in a csv file).
 
 The package enables the user to process any set of user-defined points on rivers or process any of the pre-defined 3,576,396 points on rivers across the globe. Please see the [example](https://github.com/mintproject/riverwidthEO/blob/master/example.py) script for information on how to use the package.
@@ -64,3 +64,17 @@ The current version of the algorithm has three limitations that we intend to add
 1. In certain cases clouds filter has omission errors which leads to underestimation of surface area by the algorithm.
 2. Similarly, in certain cases cloud shadows get incorrectly classified as water which leads to overestimation of surface area by the algorithm.
 3. The current version does not mask out water bodies adjacent to the river segment in the area calculation which could lead to overestimation of surface area for river segments.
+
+
+### changes in 1.1
+##### Cloud Filter
+The previous cloud filter was missing clouds and hazy images. The latest version address the cloud issue by adding new filtering strategy.
+
+###### Correlation between Aerosol Band and Water Vapor Band in Sentinel-2
+- Cloudy and hazy images show high correlation between the aerosol band and the water vapor band which can be used to flag cloudy and hazy images.
+- Images where correlation between aerosol band and water vapor band is greater than 0.8 are considered as cloudy or hazy images.
+- For these images, the cloud probability threshold is set to 0.1 instead of 0.4 (previous version).
+- A side effect of this strategy is that river segment that are surrounded by bare soil also give high correlation. To handle this, we first check correlation values of all the images for that segment. If a vast majority of the images show high correlation values, then this strategy is not applied on those segments.
+
+##### Additional Training Data
+ The image classification model was updated by adding additional 542 image samples where the previous version was performing poorly.
