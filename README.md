@@ -68,9 +68,8 @@ The current version of the algorithm has three limitations that we intend to add
 
 ### changes in 1.1
 ##### Cloud Filter
-The previous cloud filter was missing clouds and hazy images. The latest version address the cloud issue by adding new filtering strategy.
+The previous cloud filter was missing clouds and hazy images. The latest version address the cloud issue by adding a new cloud filtering strategy.
 
-###### Correlation between Aerosol Band and Water Vapor Band in Sentinel-2
 - Cloudy and hazy images show high correlation between the aerosol band and the water vapor band which can be used to flag cloudy and hazy images.
 - Images where correlation between aerosol band and water vapor band is greater than 0.8 are considered as cloudy or hazy images.
 - For these images, the cloud probability threshold is set to 0.1 instead of 0.4 (previous version).
@@ -81,4 +80,3 @@ The previous cloud filter was missing clouds and hazy images. The latest version
 
  ##### Spatial Clustering combined with Semantic Segmentation
  The strategy to combine clustering and semantic segmentation based maps were updated. The latest version improves detection performance in the presence of haze. A new strategy to identify cloud shadows was added to reduce errors.
- 
