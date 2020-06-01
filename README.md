@@ -78,3 +78,7 @@ The previous cloud filter was missing clouds and hazy images. The latest version
 
 ##### Additional Training Data
  The image classification model was updated by adding additional 542 image samples where the previous version was performing poorly.
+
+ ##### Spatial Clustering combined with Semantic Segmentation
+ The strategy to combine clustering and semantic segmentation based maps were updated. The latest version improves detection performance in the presence of haze. A new strategy to identify cloud shadows was added to reduce errors.
+ 

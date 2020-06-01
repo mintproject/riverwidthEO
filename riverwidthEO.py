@@ -652,6 +652,26 @@ def label_correction(lpath):
     for j in range(N):
         nlist.append(tlist[dargs[j]])
 
+    corr = np.zeros((N,))
+    for j in range(N):
+        cur_path = nlist[j]
+        cur_data = cur_path[0:-9] + '.tif'
+        rds = gdal.Open(cur_data,0)
+        band1 = rds.GetRasterBand(1).ReadAsArray()
+        cloud_score = rds.GetRasterBand(rds.RasterCount).ReadAsArray()
+        cmask = np.logical_and(cloud_score<40,band1>0).flatten()
+        band1 = band1.flatten()[cmask]
+        band10 = rds.GetRasterBand(10).ReadAsArray().flatten()[cmask]
+        if np.sum(cmask)==0:
+            corr[j] = 1
+        elif np.std(band1)==0 or np.std(band10)==0:
+            corr[j] = -1
+        else:
+            corr[j] = np.corrcoef(band1,band10)[0,1]
+
+    cflag = 1
+    if np.sum(corr>0.8)/N>0.9:
+        clag = 0
 
     #estimating relative elevation using multi-temporal classification maps
     # elevation of a pixel is inversely proportional to # of times it is labelled as water
@@ -661,6 +681,13 @@ def label_correction(lpath):
         cloud = ds.GetRasterBand(2).ReadAsArray().astype(float)
         pred[cloud==1] = np.nan
         pred[cloud==2] = np.nan
+        if cflag==1 and corr[j]>0.8:
+            cur_path = nlist[j]
+            cur_data = cur_path[0:-9] + '.tif'
+            rds = gdal.Open(cur_data,0)
+            ncloud = rds.GetRasterBand(rds.RasterCount).ReadAsArray()>10
+            pred[ncloud==1] = np.nan
+
         if j ==0:
             rows,cols = pred.shape
             maps = np.zeros((rows,cols,N))
@@ -680,9 +707,30 @@ def label_correction(lpath):
         pred_labels = ds.GetRasterBand(1).ReadAsArray().astype(float)*1.0/100.0
         lds = gdal.Open(nlist[j][0:-8] + 'lprd.tif',0)
         lprd = lds.GetRasterBand(1).ReadAsArray().astype(float)*1.0/100.0
-        pred_labels[pred_labels>0.2] = lprd[pred_labels>0.2]/0.6
-
+        lprd = lprd/np.max([np.max(lprd),0.5])
         cloud = ds.GetRasterBand(2).ReadAsArray().astype(float)
+
+        ggl = np.sum(np.logical_and(pred_labels[cloud!=2]>lprd[cloud!=2],np.logical_and(pred_labels[cloud!=2]>0.5,lprd[cloud!=2]<0.8)))
+        lgg = np.sum(np.logical_and(lprd[cloud!=2]>pred_labels[cloud!=2],np.logical_and(lprd[cloud!=2]>0.5,pred_labels[cloud!=2]<0.8)))
+
+        if np.sum(cloud==2)>0 or np.sum(pred_labels>0.8)*1.0/(rows*cols)>0.8:
+            pred_labels = pred_labels.copy()
+        elif ggl<10 and corr[j]>0.5:
+            pred_labels = lprd.copy()
+        else:
+            shadow = np.logical_and(lprd>pred_labels,np.logical_and(lprd>0.5,pred_labels<0.8))
+            # print(shadow.shape,pred_labels.shape)
+            pred_labels[shadow] = 0.5
+            # pred_labels[pred_labels>0.2] = lprd[pred_labels>0.2]
+
+
+        if cflag==1 and corr[j]>0.8:
+            cur_path = nlist[j]
+            cur_data = cur_path[0:-9] + '.tif'
+            rds = gdal.Open(cur_data,0)
+            ncloud = rds.GetRasterBand(rds.RasterCount).ReadAsArray()>10
+            cloud[ncloud==1] = 1
+
         pred_labels[cloud==1] = 0.5
         pred_labels[cloud==2] = 0.5
 
