@@ -1,4 +1,4 @@
-# riverwidthEO version 1.1 (updated May 31st)
+# riverwidthEO version 1.2 (updated July 1st)
 A python package that processes river segments using satellite imagery and machine learning to create surface area estimates (delivered in a csv file).
 
 The package enables the user to process any set of user-defined points on rivers or process any of the pre-defined 3,576,396 points on rivers across the globe. Please see the [example](https://github.com/mintproject/riverwidthEO/blob/master/example.py) script for information on how to use the package.
@@ -9,9 +9,7 @@ River Segment Surface Area Dataset provides pre-computed surface area variations
 ### Background
 <div style="text-align: justify">In many earth science applications, calibration of physical models is a key challenge because ground observations are very scarce or completely absent in most regions. For example, hydrological models simulate the flow of water in a basin using physical principles, but necessarily contain numerous parameters (e.g., soil conductivity at different grid points) whose values need to be calibrated for each study region with the help of observations. The most commonly used observation is discharge (volume per second) estimates that are available through ground stations. These stations are costly to install and maintain, and thus are limited in number.  This paucity (or complete absence) of observation data often leads to poorly calibrated models that provide incorrect predictions or have high uncertainty in practice.
 
-Our approach is to provide this much needed calibration data using novel machine learning techniques and multi-temporal satellite imagery that is available freely from Earth Observing satellite based sensors such as Sentinel and Landsat. The latest version (version 1.0) of the package uses descarteslabs API to download Sentinel-2 imagery of any given river segment. The multi-spectral imagery is then converted into land/water maps using CNN based deep learning techniques. The area variations thus obtained can be used to constraint hydrological models. Watch this [<ins>video</ins>](http://umnlcc.cs.umn.edu/tmp/data-1050883510-7366.mp4) to see surface area variations of a river segment in Ethiopia.</div>
-
-
+Our approach is to provide this much needed calibration data using novel machine learning techniques and multi-temporal satellite imagery that is available freely from Earth Observing satellite based sensors such as Sentinel and Landsat. The latest version (version 1.2) of the package uses descarteslabs API to download Sentinel-2 imagery of any given river segment. The multi-spectral imagery is then converted into land/water maps using CNN based deep learning techniques. The area variations thus obtained can be used to constraint hydrological models. Watch this [<ins>video</ins>](http://umnlcc.cs.umn.edu/tmp/data-1050883510-7366.mp4) to see surface area variations of a river segment in Ethiopia.</div>
 
 
 ### Installation
@@ -34,10 +32,10 @@ DESCARTESLABS_CLIENT_SECRET=...
 ##### Anaconda
 Install anaconda if it is currently not installed -
 ```
-curl -O https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh
+wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh
 sha256sum Anaconda3-5.0.1-Linux-x86_64.sh
 bash Anaconda3-5.0.1-Linux-x86_64.sh
-source /home/khand035/.bashrc
+source ~/.bashrc
 ```
 set up the conda environment -
 ```
@@ -65,6 +63,10 @@ The current version of the algorithm has three limitations that we intend to add
 2. Similarly, in certain cases cloud shadows get incorrectly classified as water which leads to overestimation of surface area by the algorithm.
 3. The current version does not mask out water bodies adjacent to the river segment in the area calculation which could lead to overestimation of surface area for river segments.
 
+### changes in 1.2
+
+##### Additional Training Data
+ The image classification model was updated by adding additional ~3,000 labeled images where the previous version was performing poorly. This model was initialized using a pre-trained model trained on ~90,000 cloud free images from all over Ethiopia.
 
 ### changes in 1.1
 ##### Cloud Filter

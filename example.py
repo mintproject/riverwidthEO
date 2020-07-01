@@ -48,7 +48,7 @@ buf_size = 0.007 # it cannot be smaller than 0.006 because machine learning algo
 
 start_time = time.time()
 # this convert the rois input into a shapefile and it is stored in the job folder with the name rois.shp
-#rwm.get_cells(rois,job_type,job_name,job_loc,buf_size)
+rwm.get_cells(rois,job_type,job_name,job_loc,buf_size)
 print('Time taken to get cell information: ' + str(time.time()-start_time) + ' seconds.')
 
 # provide a cell id

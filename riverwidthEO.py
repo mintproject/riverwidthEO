@@ -159,7 +159,7 @@ def get_cells(rois,job_type,job_name,job_loc,buf_size):
         sys.exit()
     roi_file = job_dir + 'rois.shp'
     rois2polygon(rois,roi_file,job_type=job_type,buf_size=buf_size)
-    os.system('wget --quiet https://data.mint.isi.edu/files/remote-sensing/rwmbase.zip -O ' + job_dir + 'rwmbase.zip')
+    os.system('wget --quiet https://data.mint.isi.edu/files/remote-sensing/rwmbase-1.2.zip -O ' + job_dir + 'rwmbase.zip')
     os.system('unzip -jq ' + job_dir + 'rwmbase.zip -d ' + job_dir)
     # os.system('gsutil -q cp ' + 'gs://river-box-data/CountryDatasets/ETH/init/' + '*clipped_i4* ' + job_dir)
     # os.system('gsutil -q cp ' + 'gs://river-box-data/CountryDatasets/ETH/init/' + '*min_max_i4* ' + job_dir)
@@ -707,7 +707,7 @@ def label_correction(lpath):
         pred_labels = ds.GetRasterBand(1).ReadAsArray().astype(float)*1.0/100.0
         lds = gdal.Open(nlist[j][0:-8] + 'lprd.tif',0)
         lprd = lds.GetRasterBand(1).ReadAsArray().astype(float)*1.0/100.0
-        lprd = lprd/np.max([np.max(lprd),0.5])
+        # lprd = lprd/np.max([np.max(lprd),0.5])
         cloud = ds.GetRasterBand(2).ReadAsArray().astype(float)
 
         ggl = np.sum(np.logical_and(pred_labels[cloud!=2]>lprd[cloud!=2],np.logical_and(pred_labels[cloud!=2]>0.5,lprd[cloud!=2]<0.8)))
@@ -874,8 +874,15 @@ def classify_cell(job_name,job_loc,cell_id,start_date,end_date):
 
     job_dir = job_loc + job_name + '/'
     driver = ogr.GetDriverByName("ESRI Shapefile")
-    s2model_znorm=load_model(job_dir + 'random_s2img_s2lab_exp22_global_znorm_clipped_i4.hdf')
-    s2model_lminmax=load_model(job_dir + 'random_s2img_s2lab_exp22_local_min_max_i4.hdf')
+    # #version 1.1
+    # s2model_znorm=load_model(job_dir + 'random_s2img_s2lab_exp22_global_znorm_clipped_i4.hdf')
+    # s2model_lminmax=load_model(job_dir + 'random_s2img_s2lab_exp22_local_min_max_i4.hdf')
+    # summary_file = 'summary_stats_znorm_model.txt'
+
+    #version 1.2
+    s2model_znorm=load_model(job_dir + 'init_s2img_s2lab_exp30_global_znorm_clipped_i3.hdf')
+    s2model_lminmax=load_model(job_dir + 'random_s2img_s2lab_exp30_local_minmax_clipped_i3.hdf')
+    summary_file = 'summary_stats_random_s2img_s2img_exp30_global_znorm_clipped_i1.txt'
     roi_file = job_dir + 'rois.shp'
 
 
@@ -898,8 +905,8 @@ def classify_cell(job_name,job_loc,cell_id,start_date,end_date):
             tpath = tlist[i]
             if 'prd.tif' in tpath or 'corr.tif' in tpath:
                 continue
-            classify_image(tpath,job_dir + 'summary_stats_znorm_model.txt',s2model_znorm,4,'_zprd.tif')
-            classify_image(tpath,job_dir + 'summary_stats_lminmax_model.txt',s2model_lminmax,1,'_lprd.tif')
+            classify_image(tpath,job_dir + summary_file,s2model_znorm,4,'_zprd.tif')
+            classify_image(tpath,job_dir + summary_file,s2model_lminmax,1,'_lprd.tif')
             bar.update(i+1)
         bar.finish()
         print('preparing timeseries csv and movie for ' + cur_id)
